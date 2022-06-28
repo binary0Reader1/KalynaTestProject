@@ -1,44 +1,32 @@
-using DG.Tweening;
-using Level;
-using Level.Objects;
-using System.Threading.Tasks;
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-namespace Canvas
+public class LoseMenu : MenuItem
 {
-    public class LoseMenu : RequiredLevelObject
+    public override MenuType AssignedMenuType { get; protected set; } = MenuType.Lose;
+    private bool _isButtonTouched;
+
+    public void RestartLevel()
     {
-        public override int InitializeOrder { get; protected set; } = 0;
+        if (_isButtonTouched) return;
 
-        private CanvasGroup _canvasGroup;
-        private TransitionBackground _transitionBackground;
-        private float _transitionDurationInSeconds = 1;
-        private LevelManagement _levelManagement;
+        SceneManagement.SetLevelResult(false);
 
-        protected override void InitializeInstruction(LevelManagement levelManagement)
-        {
-            _levelManagement = levelManagement;
+        Close();
 
-            _canvasGroup = GetComponent<CanvasGroup>();
-            _transitionBackground = FindObjectOfType<TransitionBackground>();
+        _isButtonTouched = true;
+    }
 
-            gameObject.SetActive(false);
-            _canvasGroup.alpha = 0;
-        }
+    protected override void OpenInstruction()
+    {
+        gameObject.SetActive(true);
+        Time.timeScale = 0;
+    }
 
-        protected async override void OnLevelEndedInstuction()
-        {
-            if (_levelManagement.IsLevelCompleted) return;
-
-            await Task.Delay((int)(_transitionBackground.TransitionDurationInSeconds * 1000));
-            gameObject.SetActive(true);
-            DOTween.To(() => _canvasGroup.alpha, x => _canvasGroup.alpha = x, 1, _transitionDurationInSeconds);
-        }
-
-        /* WARNING: EXTREMELY CRUNCH ZONE!!!*/
-        public void RestartLevelButtonAction()
-        {
-            LevelManagement.RestartLevel();
-        }
+    protected override void CloseInstruction()
+    {
+        gameObject.SetActive(false);
+        Time.timeScale = 1;
     }
 }

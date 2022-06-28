@@ -1,4 +1,4 @@
-using FactoryObjects.Enemies;
+using Enemies;
 
 namespace ObjectSettings.Enemies.States
 {

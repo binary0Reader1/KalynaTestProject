@@ -1,4 +1,4 @@
-using FactoryObjects.Enemies;
+using Enemies;
 using ObjectSettings.General;
 using Player;
 using UnityEngine;

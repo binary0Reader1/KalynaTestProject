@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Player
 {
-    public class CameraMovement : MonoBehaviour, IMoveable
+    public class CameraMovement : MonoBehaviour
     {
         public float Speed { get => _speed; set => _speed = value; }
         private Vector3 Direction => _target.position - transform.position;
@@ -23,7 +23,7 @@ namespace Player
             Move();
         }
 
-        public void Move()
+        private void Move()
         {
             Vector3 newPosition = Direction;
             newPosition.y = 0;

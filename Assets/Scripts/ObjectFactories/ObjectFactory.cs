@@ -1,5 +1,4 @@
 using FactoryObjects;
-using Level.Objects;
 using UnityEngine;
 
 namespace Factories
@@ -8,7 +7,7 @@ namespace Factories
     ///Base class for all object factories.
     ///Used to standardize the creation of objects.
     ///</Summary>
-    public abstract class ObjectFactory<O, T> : RequiredLevelObject where O : FactoryObject where T : FactoryObjectType
+    public abstract class ObjectFactory<O, T> : MonoBehaviour where O : FactoryObject where T : FactoryObjectType
     {
         /// <summary>
         /// Used to get all the objects that the factory contains.

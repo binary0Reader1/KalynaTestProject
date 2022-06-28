@@ -1,42 +1,53 @@
-using Level;
 using ObjectSettings.General;
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Player
 {
     public class PlayerManagement : MonoBehaviour, IHealthChangeable, IMoveable, IDestructable
     {
+        public Vector2 Direction { 
+            get
+            {
+                return new Vector2(_direction.x, _direction.z);
+            }
+            set
+            {
+                _direction = new Vector3(value.x, 0, value.y);
+            }
+        }
+
         public float Speed { get => _speed; set => _speed = value; }
         public float MaxHealth { get => _maxHealth; set => _maxHealth = value; }
-
         public Action OnHealthChanged { get; set; }
         public Action OnDestruct { get; set; }
         public float Health { get; set; }
 
-        [SerializeField] private DynamicJoystick _dynamicJoystick;
         [SerializeField] private float _maxHealth = 100;
         [SerializeField] private float _speed = 5;
 
         private bool _canMove = true;
         private Rigidbody _rigidbody;
-        private LevelManagement _levelManagement;
+        private Vector3 _direction;
+        private bool _isDestroyed = false;
 
-        public void Move()
-        {
-            _rigidbody.AddForce(new Vector3(_dynamicJoystick.Direction.x, 0, _dynamicJoystick.Direction.y) * _speed);
-        }
+        
 
         private void Start()
         {
             Health = MaxHealth;
             _rigidbody = GetComponent<Rigidbody>();
-            _levelManagement = FindObjectOfType<LevelManagement>();
         }
 
         private void FixedUpdate()
         {
             if (_canMove) Move();
+        }
+
+        public void Move()
+        {
+            _rigidbody.AddForce(_direction * _speed);
         }
 
         public void ChangeHealth(float value)
@@ -48,15 +59,19 @@ namespace Player
             if (Health == 0) Destruct();
         }
 
-        public void Destruct()
+        public async void Destruct()
         {
+            if (_isDestroyed) return;
+
+            _isDestroyed = true;
+
             OnDestruct?.Invoke();
-
-            _dynamicJoystick.gameObject.SetActive(false);
-
-            _levelManagement.EndLevel(false);
             _canMove = false;
             _rigidbody.freezeRotation = false;
+
+            await Task.Delay(1000);
+
+            FindObjectOfType<LevelManagement>().SetLevelStatus(GameStatusType.Lose);            
         }
     }
 }

@@ -1,4 +1,4 @@
-using FactoryObjects.Enemies;
+using Enemies;
 using ObjectSettings.General;
 using Player;
 using UnityEngine;
@@ -58,9 +58,9 @@ namespace ObjectSettings.Enemies.States.Instances
         {
             if (collision?.body?.GetComponent<PlayerManagement>() != null)
             {
-                _enemyRigidbody.AddForce(-Direction * Speed/2, ForceMode.Impulse);
+                _enemyRigidbody.AddForce(-Direction * Speed/3.5f, ForceMode.Impulse);
 
-                _playerRigidbody.AddForce(Direction * Speed/2, ForceMode.Impulse);
+                _playerRigidbody.AddForce(Direction * Speed/3.5f, ForceMode.Impulse);
 
                 DoDamage();
             }

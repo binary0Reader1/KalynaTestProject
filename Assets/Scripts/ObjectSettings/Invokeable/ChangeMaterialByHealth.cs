@@ -46,7 +46,7 @@ namespace ObjectSettings.Invokeable
                 return;
             }
 
-            throw new Exception(StringConstants.ThereIsNoNeededEllementOnObject + typeof(IHealthChangeable).Name);
+            /*throw new Exception(StringConstants.ThereIsNoNeededEllementOnObject + typeof(IHealthChangeable).Name);*/
         }
     }
 }

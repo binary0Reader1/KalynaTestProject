@@ -1,46 +1,34 @@
-using DG.Tweening;
-using Level;
-using Level.Objects;
-using System.Threading.Tasks;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-namespace Canvas
+public class WinMenu : MenuItem
 {
-    public class WinMenu : RequiredLevelObject
+    public override MenuType AssignedMenuType { get; protected set; } = MenuType.Win;
+
+    private bool _isButtonTouched = false;
+
+    public void NextLevel()
     {
-        public override int InitializeOrder { get; protected set; } = 0;
+        if (_isButtonTouched) return;
 
-        private CanvasGroup _canvasGroup;
-        private TransitionBackground _transitionBackground;
+        Close();
+        SceneManagement.SetLevelResult(true);
 
-        private float _transitionDurationInSeconds = 1;
+        _isButtonTouched = true;
+    }
 
-        private LevelManagement _levelManagement;
+    protected override void OpenInstruction()
+    {
+        Time.timeScale = 0;
+        gameObject.SetActive(true);
+    }
 
-        protected override void InitializeInstruction(LevelManagement levelManagement)
-        {
-            _levelManagement = levelManagement;
-
-            _canvasGroup = GetComponent<CanvasGroup>();
-            _transitionBackground = FindObjectOfType<TransitionBackground>();
-
-            gameObject.SetActive(false);
-            _canvasGroup.alpha = 0;
-        }
-
-        protected async override void OnLevelEndedInstuction()
-        {
-            if (!_levelManagement.IsLevelCompleted) return;
-
-            await Task.Delay((int)(_transitionBackground.TransitionDurationInSeconds * 1000));
-            gameObject.SetActive(true);
-            DOTween.To(() => _canvasGroup.alpha, x => _canvasGroup.alpha = x, 1, _transitionDurationInSeconds);
-        }
-
-        /* WARNING: EXTREMELY CRUNCH ZONE!!!*/
-        public void NextLevelButtonAction()
-        {
-            LevelManagement.NextLevel();
-        }
+    protected override void CloseInstruction()
+    {
+        Time.timeScale = 1;
+        gameObject.SetActive(false);
     }
 }
